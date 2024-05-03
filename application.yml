@@ -14,8 +14,8 @@ plugins:
       flowerytts: false # Enable Flowery TTs source
       youtube: true # Enable YouTube search source (https://github.com/topi314/LavaSearch)
     spotify:
-      clientId: "8a1a00e2571f45429a82d47b2fe99268"
-      clientSecret: "872b1c5704334af8a9a4c62f4d9ede47"
+      clientId: ""
+      clientSecret: ""
       countryCode: "US" # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
       playlistLoadLimit: 6 # The number of pages at 100 tracks each
       albumLoadLimit: 6 # The number of pages at 50 tracks each
@@ -81,20 +81,11 @@ lavalink:
     youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true
-    ratelimit:
-      ipBlocks: ["2a02:0180:0006:0001:0000:0000:0000:01fc::/128"] # list of ip blocks
-      # excludedIps: ["...", "..."] # ips which should be explicit excluded from usage by lavalink
-      strategy: "RotateOnBan" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
-      searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing
-      retryLimit: -1 # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
-    #youtubeConfig: # Required for avoiding all age restrictions by YouTube, some restricted videos still can be played without.
-      #email: "" # Email of Google account
-      #password: "" # Password of Google account
-    #httpConfig: # Useful for blocking bad-actors from ip-grabbing your music node and attacking it, this way only the http proxy will be attacked
-      #proxyHost: "localhost" # Hostname of the proxy, (ip or domain)
-      #proxyPort: 3128 # Proxy port, 3128 is the default for squidProxy
-      #proxyUser: "" # Optional user for basic authentication fields, leave blank if you don't use basic auth
-      #proxyPassword: "" # Password for basic authentication
+    # ratelimit:
+    #   ipBlocks: [""] # list of ip blocks
+    #   strategy: "RotateOnBan" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+    #   searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing
+    #   retryLimit: -1 # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
 
 metrics:
   prometheus:
@@ -104,9 +95,6 @@ metrics:
 sentry:
   dsn: ""
   environment: ""
-#  tags:
-#    some_key: some_value
-#    another_key: another_value
 
 logging:
   file:
