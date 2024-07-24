@@ -35,21 +35,22 @@ install_package() {
 
 if [ "$1" == "-u" ]; then
     echo "Checking Update"
-    url = "https://api.github.com/repos/lavalink-devs/Lavalink/releases"
-    latest = $(curl -s $url | jq -r '.[0].tag_name')
-    current = $(java -jar Lavalink.jar --version | grep "Version" | awk '{print $2}')
+    url="https://api.github.com/repos/lavalink-devs/Lavalink/releases"
+    latest=$(curl -s $url | jq -r '.[0].tag_name')
+    current=$(java -jar Lavalink.jar --version | grep "Version" | awk '{print $2}')
 
-    if [ latest == "$current" ]; then
+    if [ "$latest" == "$current" ]; then
         echo "Lavalink is up to date"
     else
         echo "Lavalink has a new version"
         echo "Downloading..."
         wget -O Lavalink.jar "https://github.com/lavalink-devs/Lavalink/releases/download/$latest/Lavalink.jar"
+    fi
     exit 0
 fi
 
-if [ `id -u` -ne 0 ]
-    then echo "Please run as root"
+if [ `id -u` -ne 0 ]; then
+    echo "Please run as root"
     exit
 fi
 
@@ -87,33 +88,33 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 echo "Downloading Lavalink..."
-url = "https://api.github.com/repos/lavalink-devs/Lavalink/releases"
-latest = $(curl -s $url | jq -r '.[0].tag_name')
+url="https://api.github.com/repos/lavalink-devs/Lavalink/releases"
+latest=$(curl -s $url | jq -r '.[0].tag_name')
 wget -O Lavalink.jar "https://github.com/lavalink-devs/Lavalink/releases/download/$latest/Lavalink.jar"
-mkdir -P Plugins
+mkdir -p Plugins
 
-lavasrcver = $(curl -s https://raw.githubusercontent.com/topi314/LavaSrc/releases | jq -r '.[0].tag_name')
+lavasrcver=$(curl -s https://api.github.com/repos/topi314/LavaSrc/releases | jq -r '.[0].tag_name')
 wget -O Plugins/lavasrc-$lavasrcver.jar "https://github.com/topi314/LavaSrc/releases/download/$lavasrcver/lavasrc-$lavasrcver.jar"
 
 echo "Downloading Lavalink config..."
-lavaapp = $(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
-sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" $lavaapp
+lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
+echo "$lavaapp" > application.yml
+sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
 
 echo "Please Enter you want use port"
 read port
-sed -i "s|port:.*|port: $port|" $lavaapp
+sed -i "s|port:.*|port: $port|" application.yml
 
 echo "Please Enter you want use password"
-read paassword
-sed -i "s|password:.*|password: $password|" $lavaapp
-cat "$lavaapp" > application.yml
-
+read password
+sed -i "s|password:.*|password: $password|" application.yml
 
 echo "Register Lavalink as a service..."
-lavaservice = $(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/lavalink.service)
-
-sed -i "s|ExecStart=.*|ExecStart=java -jar $PWD/Lavalink.jar|" $lavaservice
-cat "$lavaservice" > /etc/systemd/system/lavalink.service
+lavaservice=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/lavalink.service)
+echo "$lavaservice" > lavalink.service
+sed -i "s|WorkingDirectory=.*|WorkingDirectory=$PWD|" lavalink.service
+sed -i "s|ExecStart=.*|ExecStart=java -jar $PWD/Lavalink.jar|" lavalink.service
+cp lavalink.service /etc/systemd/system/lavalink.service
 
 systemctl daemon-reload
 systemctl enable lavalink
