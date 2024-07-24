@@ -96,10 +96,14 @@ mkdir -p Plugins
 lavasrcver=$(curl -s https://api.github.com/repos/topi314/LavaSrc/releases | jq -r '.[0].tag_name')
 wget -O Plugins/lavasrc-$lavasrcver.jar "https://github.com/topi314/LavaSrc/releases/download/$lavasrcver/lavasrc-$lavasrcver.jar"
 
+lavayoutube=$(curl -s https://api.github.com/repos/lavalink-devs/youtube-source/releases | jq -r '.[0].tag_name')
+wget -O Plugins/lavasrc-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/lavasrc-$lavayoutube.jar"
+
 echo "Downloading Lavalink config..."
 lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
 echo "$lavaapp" > application.yml
 sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
+sed -i "s|- dependency: "dev.lavalink.youtube:youtube-plugin:*|- dependency: "dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
 
 echo "Please Enter you want use port"
 read port
@@ -115,6 +119,7 @@ echo "$lavaservice" > lavalink.service
 sed -i "s|WorkingDirectory=.*|WorkingDirectory=$PWD|" lavalink.service
 sed -i "s|ExecStart=.*|ExecStart=java -jar $PWD/Lavalink.jar|" lavalink.service
 cp lavalink.service /etc/systemd/system/lavalink.service
+rm lavalink.service
 
 systemctl daemon-reload
 systemctl enable lavalink
