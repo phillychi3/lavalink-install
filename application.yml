@@ -85,7 +85,7 @@ lavalink:
   server:
     password: "lavanopassword"
     sources:
-      youtube: true
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true

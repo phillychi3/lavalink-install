@@ -57,7 +57,7 @@ if [ "$1" == "-u" ]; then
     current=$(ls Plugins | grep lavasrc | grep youtube | awk -F'-' '{print $3}' | awk -F'.' '{print $1"."$2"."$3}')
     if [ "$lavayoutube" != "$current" ]; then
         echo "Downloading Youtube-source..."
-        wget -O Plugins/lavasrc-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/lavasrc-$lavayoutube.jar"
+        wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/lavasrc-$lavayoutube.jar"
     sed -i "s|- dependency: "dev.lavalink.youtube:youtube-plugin:*|- dependency: "dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
     fi
     systemctl restart lavalink
@@ -80,6 +80,18 @@ else
     exit 1
 fi
 print_system
+
+port="noset"
+password="noset"
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -p|--port) port="$2"; shift ;;
+        -pwd|--password) password="$2"; shift ;;
+        *) echo "未知參數: $1"; exit 1 ;;
+    esac
+    shift
+done
 
 echo "check java..."
 if ! [ -x "$(command -v java)" ]; then
@@ -111,22 +123,39 @@ mkdir -p Plugins
 lavasrcver=$(curl -s https://api.github.com/repos/topi314/LavaSrc/releases | jq -r '.[0].tag_name')
 wget -O Plugins/lavasrc-$lavasrcver.jar "https://github.com/topi314/LavaSrc/releases/download/$lavasrcver/lavasrc-$lavasrcver.jar"
 
+
 lavayoutube=$(curl -s https://api.github.com/repos/lavalink-devs/youtube-source/releases | jq -r '.[0].tag_name')
-wget -O Plugins/lavasrc-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/lavasrc-$lavayoutube.jar"
+wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/youtube-$lavayoutube.jar"
 
 echo "Downloading Lavalink config..."
 lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
 echo "$lavaapp" > application.yml
 sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
-sed -i "s|- dependency: "dev.lavalink.youtube:youtube-plugin:*|- dependency: "dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
+sed -i "s|- dependency: \"dev.lavalink.youtube:youtube-plugin:*|- dependency: \"dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
 
-echo "Please Enter you want use port"
-read port
+if [[ $port == "noset" ]]; then
+    echo "Please enter the port you want to use (default: 23333):"
+    read user_port
+    if [[ -n "$user_port" ]]; then
+        port=$user_port
+    else
+        port=23333
+    fi
+fi
+
+if [[ $password == "noset" ]]; then
+    echo "Please enter the password you want to use:"
+    read user_password
+    if [[ -n "$user_password" ]]; then
+        password=$user_password
+    else
+        echo "password: n0s3tp@ssw0rd"
+        password="n0s3tp@ssw0rd"
+    fi
+fi
+
 sed -i "s|port:.*|port: $port|" application.yml
-
-echo "Please Enter you want use password"
-read password
-sed -i "s|password:.*|password: $password|" application.yml
+sed -i "s|password:.*|password: \"$password\"|" application.yml
 
 echo "Register Lavalink as a service..."
 lavaservice=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/lavalink.service)
@@ -142,3 +171,11 @@ systemctl start lavalink
 
 echo "Lavalink is now running"
 echo "Please Edit your application.yml for more configuration"
+
+echo -e "
+Installation finished
+------------------------------
+Lavalink Port: $port
+Lavalink Password: $password
+------------------------------
+"
