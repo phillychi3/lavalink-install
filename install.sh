@@ -102,11 +102,15 @@ print_system
 
 port="noset"
 password="noset"
+spotifyid="noset"
+spotifyscrect="noset"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -p|--port) port="$2"; shift ;;
         -pwd|--password) password="$2"; shift ;;
+        -sid|--spotifyclientid) spotifyid="$2"; shift ;;
+        -scs|--spotifyclientsecret) spotifyscrect="$2"; shift ;;
         *) echo "未知參數: $1"; exit 1 ;;
     esac
     shift
@@ -172,8 +176,30 @@ if [[ $password == "noset" ]]; then
     fi
 fi
 
+if [[ $spotifyid == "noset" ]]; then
+    echo "Please enter spotify client id:"
+    read spotify_id
+    if [[ -n "$spotify_id" ]]; then
+        spotifyid=$spotify_id
+    else
+        echo "you need edit application.yml manually"
+    fi
+fi
+
+if [[ $spotifyscrect == "noset" ]]; then
+    echo "Please enter the spotify secret:"
+    read spotify_screct
+    if [[ -n "$spotify_screct" ]]; then
+        spotifyscrect=$spotify_screct
+    else
+        echo "you need edit application.yml manually"
+    fi
+fi
+
 sed -i "s|port:.*|port: $port|" application.yml
 sed -i "s|password:.*|password: \"$password\"|" application.yml
+sed -i "s|clientId:.*|clientId: \"$spotifyid\"|" application.yml
+sed -i "s|clientSecret:.*|clientSecret: \"$spotifyscrect\"|" application.yml
 
 echo "Register Lavalink as a service..."
 lavaservice=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/lavalink.service)
