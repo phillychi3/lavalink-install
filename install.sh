@@ -1,4 +1,4 @@
-
+#!/bin/bash
 print_system() {
     echo -e "
     ------------------------------
@@ -57,7 +57,7 @@ if [ "$1" == "-u" ]; then
     current=$(ls Plugins | grep lavasrc | grep youtube | awk -F'-' '{print $3}' | awk -F'.' '{print $1"."$2"."$3}')
     if [ "$lavayoutube" != "$current" ]; then
         echo "Downloading Youtube-source..."
-        wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/lavasrc-$lavayoutube.jar"
+        wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/youtube-plugin-$lavayoutube.jar"
     sed -i "s|- dependency: "dev.lavalink.youtube:youtube-plugin:*|- dependency: "dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
     fi
     systemctl restart lavalink
@@ -123,9 +123,8 @@ mkdir -p Plugins
 lavasrcver=$(curl -s https://api.github.com/repos/topi314/LavaSrc/releases | jq -r '.[0].tag_name')
 wget -O Plugins/lavasrc-$lavasrcver.jar "https://github.com/topi314/LavaSrc/releases/download/$lavasrcver/lavasrc-$lavasrcver.jar"
 
-
 lavayoutube=$(curl -s https://api.github.com/repos/lavalink-devs/youtube-source/releases | jq -r '.[0].tag_name')
-wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/youtube-$lavayoutube.jar"
+wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/youtube-plugin-$lavayoutube.jar"
 
 echo "Downloading Lavalink config..."
 lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
