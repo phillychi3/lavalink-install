@@ -149,7 +149,7 @@ echo "Downloading Lavalink config..."
 lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
 echo "$lavaapp" > application.yml
 sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
-sed -i "s|- dependency: \"dev.lavalink.youtube:youtube-plugin:*|- dependency: \"dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
+sed -i "s|- dependency: \"dev.lavalink.youtube:youtube-plugin:[0-9.]*\"|- dependency: \"dev.lavalink.youtube:youtube-plugin:$lavayoutube\"|" application.yml
 
 if [[ $port == "noset" ]]; then
     echo "Please enter the port you want to use (default: 23333):"
