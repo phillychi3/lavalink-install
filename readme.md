@@ -10,7 +10,7 @@ Usage:
 
 
 ```bash
-./install.sh -p 23333 -pwd setpassword
+./install.sh -p 23333 -pwd setpassword -sid spotify_client_id -scs spotify_client_screct
 ```
 
 update
