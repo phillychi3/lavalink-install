@@ -8,6 +8,25 @@ print_system() {
     "
 }
 
+install_java(){
+    echo "Installing openjdk-17"
+    case $OSID in
+        *debian*|*ubuntu*)
+            sudo apt-get install openjdk-17-jdk-headless -y
+            ;;
+        *centos*|*fedora*)
+            sudo yum install java-17-openjdk -y
+            ;;
+        *arch*)
+            sudo pacman -S jdk17-openjdk --noconfirm
+            ;;
+        *)
+            echo "OS not supported Please install java-17 manually"
+            exit 1
+            ;;
+    esac
+}
+
 install_package() {
     # $1: package name for debian/ubuntu
     # $2: package name for centos/fedora
@@ -15,7 +34,7 @@ install_package() {
     case $OSID in
         *debian*|*ubuntu*)
             echo "Installing $1"
-            sudo apt-get install $1 -y
+            sudo apt-get install -y $1
             ;;
         *centos*|*fedora*)
             echo "Installing $2"
@@ -97,7 +116,7 @@ echo "check java..."
 if ! [ -x "$(command -v java)" ]; then
     echo "java is not installed"
     echo "installing java..."
-    echo "not Finish install java countinue"
+    install_java
 fi
 
 echo "check curl..."
