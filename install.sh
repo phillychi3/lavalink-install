@@ -70,14 +70,14 @@ if [ "$1" == "-u" ]; then
     if [ "$lavasrcver" != "$current" ]; then
         echo "Downloading Lavasrc..."
         wget -O Plugins/lavasrc-plugin-$lavasrcver.jar "https://github.com/topi314/LavaSrc/releases/download/$lavasrcver/lavasrc-plugin-$lavasrcver.jar"
-        sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
+        sed -i "s|- dependency: \"com.github.topi314.lavasrc:lavasrc-plugin:*\"|- dependency: \"com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver\"|" application.yml
     fi
     lavayoutube=$(curl -s https://api.github.com/repos/lavalink-devs/youtube-source/releases | jq -r '.[0].tag_name')
     current=$(ls Plugins | grep lavasrc | grep youtube | awk -F'-' '{print $3}' | awk -F'.' '{print $1"."$2"."$3}')
     if [ "$lavayoutube" != "$current" ]; then
         echo "Downloading Youtube-source..."
         wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-devs/youtube-source/releases/download/$lavayoutube/youtube-plugin-$lavayoutube.jar"
-    sed -i "s|- dependency: "dev.lavalink.youtube:youtube-plugin:*|- dependency: "dev.lavalink.youtube:youtube-plugin:$lavayoutube|" application.yml
+    sed -i "s|- dependency: \"dev.lavalink.youtube:youtube-plugin:[0-9.]*\"|- dependency: \"dev.lavalink.youtube:youtube-plugin:$lavayoutube\"|" application.yml
     fi
     systemctl restart lavalink
     exit 0
@@ -152,7 +152,7 @@ wget -O Plugins/youtube-plugin-$lavayoutube.jar "https://github.com/lavalink-dev
 echo "Downloading Lavalink config..."
 lavaapp=$(curl -s https://raw.githubusercontent.com/phillychi3/lavalink-install/main/application.yml)
 echo "$lavaapp" > application.yml
-sed -i "s|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:*|- dependency: com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver|" application.yml
+sed -i "s|- dependency: \"com.github.topi314.lavasrc:lavasrc-plugin:*\"|- dependency: \"com.github.topi314.lavasrc:lavasrc-plugin:$lavasrcver\"|" application.yml
 sed -i "s|- dependency: \"dev.lavalink.youtube:youtube-plugin:[0-9.]*\"|- dependency: \"dev.lavalink.youtube:youtube-plugin:$lavayoutube\"|" application.yml
 
 if [[ $port == "noset" ]]; then
