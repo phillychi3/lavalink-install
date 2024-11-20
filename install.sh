@@ -8,17 +8,41 @@ print_system() {
     "
 }
 
+update_package_manager() {
+    case $OSID in
+        *debian*|*ubuntu*)
+            sudo apt-get update
+            ;;
+        *centos*|*fedora*|*rhel*)
+            sudo yum update
+            ;;
+        *arch*)
+            sudo pacman -Syu
+            ;;
+        *alpine*)
+            sudo apk update
+            ;;
+        *)
+            echo "OS not supported"
+            exit 1
+            ;;
+    esac
+}
+
 install_java(){
     echo "Installing openjdk-17"
     case $OSID in
         *debian*|*ubuntu*)
             sudo apt-get install openjdk-17-jdk-headless -y
             ;;
-        *centos*|*fedora*)
+        *centos*|*fedora*|*rhel*)
             sudo yum install java-17-openjdk -y
             ;;
         *arch*)
             sudo pacman -S jdk17-openjdk --noconfirm
+            ;;
+        *alpine*)
+            sudo apk add openjdk17
             ;;
         *)
             echo "OS not supported Please install java-17 manually"
@@ -31,18 +55,23 @@ install_package() {
     # $1: package name for debian/ubuntu
     # $2: package name for centos/fedora
     # $3: package name for arch
+    # $4: package name for alpine
     case $OSID in
         *debian*|*ubuntu*)
             echo "Installing $1"
             sudo apt-get install -y $1
             ;;
-        *centos*|*fedora*)
+        *centos*|*fedora*|*rhel*)
             echo "Installing $2"
             sudo yum install $2 -y
             ;;
         *arch*)
             echo "Installing $3"
             sudo pacman -S $3 --noconfirm
+            ;;
+        *alpine*)
+            echo "Installing $4"
+            sudo apk add $4
             ;;
         *)
             echo "OS not supported"
@@ -116,6 +145,9 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+echo "Updating package manager..."
+update_package_manager
+
 echo "check java..."
 if ! [ -x "$(command -v java)" ]; then
     echo "java is not installed"
@@ -127,14 +159,14 @@ echo "check curl..."
 if ! [ -x "$(command -v curl)" ]; then
     echo "curl is not installed"
     echo "installing curl..."
-    install_package curl curl curl
+    install_package curl curl curl curl
 fi
 
 echo "check jq..."
 if ! [ -x "$(command -v jq)" ]; then
     echo "jq is not installed"
     echo "installing jq..."
-    install_package jq jq jq
+    install_package jq jq jq jq
 fi
 
 echo "Downloading Lavalink..."
